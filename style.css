@@ -1,0 +1,49 @@
+body {
+  background: radial-gradient(circle at top, #001, #012);
+  color: #fff;
+  text-align: center;
+  font-family: "Comic Sans MS", sans-serif;
+  overflow: hidden;
+}
+
+canvas {
+  margin-top: 20px;
+  background: radial-gradient(circle at center, #024, #001);
+  border-radius: 50%;
+  box-shadow: 0 0 30px gold;
+}
+
+button {
+  margin-top: 20px;
+  font-size: 20px;
+  padding: 10px 20px;
+  background: gold;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+button:disabled {
+  background: gray;
+  cursor: not-allowed;
+}
+
+#result {
+  font-size: 24px;
+  margin-top: 20px;
+}
+
+/* ❄️ Sniego efektas */
+@keyframes snow {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(100vh); }
+}
+
+.snowflake {
+  position: fixed;
+  top: -10px;
+  color: white;
+  font-size: 1em;
+  animation: snow linear infinite;
+  opacity: 0.8;
+}
