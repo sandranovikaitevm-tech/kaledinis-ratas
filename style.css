@@ -1,49 +1,32 @@
 body {
-  background: radial-gradient(circle at top, #001, #012);
-  color: #fff;
+  font-family: "Comic Sans MS", cursive, sans-serif;
   text-align: center;
-  font-family: "Comic Sans MS", sans-serif;
-  overflow: hidden;
+  background: linear-gradient(to bottom right, #ffcccc, #ffe6e6);
+  color: #333;
+}
+
+h1 {
+  margin-top: 20px;
 }
 
 canvas {
-  margin-top: 20px;
-  background: radial-gradient(circle at center, #024, #001);
+  background: #fff;
+  border: 4px solid #cc0000;
   border-radius: 50%;
-  box-shadow: 0 0 30px gold;
+  margin-top: 20px;
 }
 
 button {
   margin-top: 20px;
-  font-size: 20px;
   padding: 10px 20px;
-  background: gold;
+  font-size: 18px;
+  background-color: #cc0000;
+  color: white;
   border: none;
-  border-radius: 10px;
+  border-radius: 8px;
   cursor: pointer;
 }
 
-button:disabled {
-  background: gray;
-  cursor: not-allowed;
-}
-
-#result {
-  font-size: 24px;
-  margin-top: 20px;
-}
-
-/* ❄️ Sniego efektas */
-@keyframes snow {
-  0% { transform: translateY(0); }
-  100% { transform: translateY(100vh); }
-}
-
-.snowflake {
-  position: fixed;
-  top: -10px;
-  color: white;
-  font-size: 1em;
-  animation: snow linear infinite;
-  opacity: 0.8;
+button:hover {
+  background-color: #ff3333;
 }
