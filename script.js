@@ -1,71 +1,52 @@
-const names = {
-  1: "Sandra",
-  2: "Raimonda",
-  3: "Stanislovas",
-  4: "Darius",
-  5: "Ramunė",
-  6: "Andrius"
-};
-
-let activeNumbers = [1,2,3,4,5,6];
 const wheel = document.getElementById("wheel");
-const ctx = wheel.getContext("2d");
+const spinBtn = document.getElementById("spin");
 const result = document.getElementById("result");
-const btn = document.getElementById("spin");
+const ctx = wheel.getContext("2d");
 const music = document.getElementById("music");
 
-let angle = 0;
-const colors = ["#ff6666","#66ff66","#6666ff","#ffff66","#66ffff","#ff66ff"];
+const prizes = ["🎁 Dovana", "🎄 Kalėdų stebuklas", "☕ Karštas šokoladas", "🎅 Sveikinimas nuo Kalėdų Senelio", "🍪 Kalėdinis sausainis", "⭐ Noras išsipildys"];
+const colors = ["#ff9999", "#99ff99", "#9999ff", "#ffff99", "#ffcc99", "#cc99ff"];
+
+let startAngle = 0;
+const arc = Math.PI / (prizes.length / 2);
 
 function drawWheel() {
-  const step = (2 * Math.PI) / 6;
-  for (let i = 0; i < 6; i++) {
-    ctx.beginPath();
-    ctx.moveTo(200,200);
+  for (let i = 0; i < prizes.length; i++) {
+    const angle = startAngle + i * arc;
     ctx.fillStyle = colors[i];
-    ctx.arc(200,200,200,i*step,(i+1)*step);
+    ctx.beginPath();
+    ctx.moveTo(200, 200);
+    ctx.arc(200, 200, 200, angle, angle + arc);
     ctx.fill();
     ctx.save();
-    ctx.translate(200,200);
-    ctx.rotate(i*step + step/2);
-    ctx.fillStyle = "black";
-    ctx.font = "24px Arial";
-    ctx.fillText(i+1, 100, 10);
+    ctx.fillStyle = "#000";
+    ctx.translate(200 + Math.cos(angle + arc / 2) * 100, 200 + Math.sin(angle + arc / 2) * 100);
+    ctx.rotate(angle + arc / 2 + Math.PI / 2);
+    ctx.fillText(prizes[i], -ctx.measureText(prizes[i]).width / 2, 0);
     ctx.restore();
   }
 }
+
 drawWheel();
 
-btn.onclick = () => {
-  if (activeNumbers.length === 0) {
-    result.innerText = "🎁 Visi vardai jau išsukti!";
-    return;
-  }
-
+spinBtn.addEventListener("click", () => {
   music.play();
-  btn.disabled = true;
-  let spinAngle = Math.random() * 360 + 1080;
-  angle += spinAngle;
-  let selected = Math.floor(((angle % 360) / 60));
-  let num = 6 - selected;
-  if (num === 7) num = 1;
-  while (!activeNumbers.includes(num)) {
-    num = num % 6 + 1;
-  }
-  setTimeout(() => {
-    result.innerText = `🎄 Tu išsukai: ${names[num]} 🎁`;
-    activeNumbers = activeNumbers.filter(n => n !== num);
-    btn.disabled = false;
-  }, 3000);
-};
+  let spinTime = 3000 + Math.random() * 3000;
+  const spinAngle = Math.random() * 360 + 1080;
+  const spinRadians = (spinAngle * Math.PI) / 180;
 
-// ❄️ Sniegas
-for (let i = 0; i < 30; i++) {
-  let snow = document.createElement("div");
-  snow.classList.add("snowflake");
-  snow.textContent = "❄";
-  snow.style.left = Math.random()*100 + "vw";
-  snow.style.animationDuration = 5 + Math.random()*10 + "s";
-  snow.style.fontSize = 10 + Math.random()*20 + "px";
-  document.body.appendChild(snow);
-}
+  let start = Date.now();
+  const spin = () => {
+    let progress = (Date.now() - start) / spinTime;
+    if (progress < 1) {
+      startAngle += spinRadians / (spinTime / 16);
+      drawWheel();
+      requestAnimationFrame(spin);
+    } else {
+      music.pause();
+      const winningIndex = Math.floor(prizes.length - ((startAngle % (2 * Math.PI)) / arc)) % prizes.length;
+      result.textContent = "🎉 " + prizes[winningIndex] + " 🎉";
+    }
+  };
+  spin();
+});
