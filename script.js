@@ -1,52 +1,64 @@
 const wheel = document.getElementById("wheel");
 const spinBtn = document.getElementById("spin");
 const result = document.getElementById("result");
-const ctx = wheel.getContext("2d");
 const music = document.getElementById("music");
+const ctx = wheel.getContext("2d");
 
-const prizes = ["🎁 Dovana", "🎄 Kalėdų stebuklas", "☕ Karštas šokoladas", "🎅 Sveikinimas nuo Kalėdų Senelio", "🍪 Kalėdinis sausainis", "⭐ Noras išsipildys"];
-const colors = ["#ff9999", "#99ff99", "#9999ff", "#ffff99", "#ffcc99", "#cc99ff"];
+const prizes = [
+  "🎁 Saldainiai",
+  "🎅 Mandarinas",
+  "🎄 Karšta kakava",
+  "⭐ Poilsio minutė",
+  "❄ Kalėdinė užduotis",
+  "🎉 Staigmena"
+];
 
 let startAngle = 0;
-const arc = Math.PI / (prizes.length / 2);
+const arc = (2 * Math.PI) / prizes.length;
 
 function drawWheel() {
   for (let i = 0; i < prizes.length; i++) {
     const angle = startAngle + i * arc;
-    ctx.fillStyle = colors[i];
+
+    // spalvos
+    ctx.fillStyle = i % 2 === 0 ? "#ff9999" : "#ffcccc";
     ctx.beginPath();
     ctx.moveTo(200, 200);
     ctx.arc(200, 200, 200, angle, angle + arc);
+    ctx.lineTo(200, 200);
     ctx.fill();
+
+    // tekstas
     ctx.save();
+    ctx.translate(200, 200);
+    ctx.rotate(angle + arc / 2);
+    ctx.textAlign = "right";
     ctx.fillStyle = "#000";
-    ctx.translate(200 + Math.cos(angle + arc / 2) * 100, 200 + Math.sin(angle + arc / 2) * 100);
-    ctx.rotate(angle + arc / 2 + Math.PI / 2);
-    ctx.fillText(prizes[i], -ctx.measureText(prizes[i]).width / 2, 0);
+    ctx.font = "bold 18px Comic Sans MS";
+    ctx.fillText(prizes[i], 180, 10);
     ctx.restore();
   }
 }
 
 drawWheel();
 
-spinBtn.addEventListener("click", () => {
+spinBtn.onclick = function () {
   music.play();
-  let spinTime = 3000 + Math.random() * 3000;
-  const spinAngle = Math.random() * 360 + 1080;
-  const spinRadians = (spinAngle * Math.PI) / 180;
-
+  
+  let spinAngle = Math.random() * 3000 + 2000;
+  let duration = 3000;
   let start = Date.now();
-  const spin = () => {
-    let progress = (Date.now() - start) / spinTime;
-    if (progress < 1) {
-      startAngle += spinRadians / (spinTime / 16);
-      drawWheel();
-      requestAnimationFrame(spin);
-    } else {
-      music.pause();
-      const winningIndex = Math.floor(prizes.length - ((startAngle % (2 * Math.PI)) / arc)) % prizes.length;
-      result.textContent = "🎉 " + prizes[winningIndex] + " 🎉";
+
+  let interval = setInterval(function () {
+    let time = Date.now() - start;
+    if (time >= duration) {
+      clearInterval(interval);
+      let index = Math.floor(prizes.length - (startAngle % (2 * Math.PI)) / arc) % prizes.length;
+      result.textContent = "🎉 Laimėjai: " + prizes[index] + "!";
+      return;
     }
-  };
-  spin();
-});
+    startAngle += (spinAngle / duration) * 0.1;
+    ctx.clearRect(0, 0, wheel.width, wheel.height);
+    drawWheel();
+  }, 10);
+};
