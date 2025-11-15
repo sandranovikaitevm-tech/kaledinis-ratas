@@ -1,64 +1,64 @@
-const wheel = document.getElementById("wheel");
+
+const canvas = document.getElementById("wheel");
+const ctx = canvas.getContext("2d");
 const spinBtn = document.getElementById("spin");
 const result = document.getElementById("result");
-const ctx = wheel.getContext("2d");
 
-const prizes = [
-  "🎁 Saldainiai",
-  "🎅 Mandarinas",
-  "🎄 Karšta kakava",
-  "⭐ Poilsio minutė",
-  "❄ Kalėdinė užduotis",
-  "🎉 Staigmena"
-];
-
+const emojis = ["🎅","❄️","🌲","🧦","🎁","🔔"];
 let startAngle = 0;
-const arc = (2 * Math.PI) / prizes.length;
+let spinning = false;
 
-function drawWheel() {
-  for (let i = 0; i < prizes.length; i++) {
-    const angle = startAngle + i * arc;
+function drawWheel(){
+    const sections = 6;
+    const arc = Math.PI * 2 / sections;
+    for(let i=0;i<sections;i++){
+        ctx.beginPath();
+        ctx.fillStyle = i%2==0 ? "#ffecd2" : "#ffe4e1";
+        ctx.moveTo(200,200);
+        ctx.arc(200,200,200,startAngle + i*arc, startAngle + (i+1)*arc);
+        ctx.fill();
+        ctx.save();
+        ctx.translate(200,200);
+        ctx.rotate(startAngle + i*arc + arc/2);
+        ctx.textAlign="center";
+        ctx.font="40px Arial";
+        ctx.fillStyle="#000";
+        ctx.fillText(emojis[i],120,10);
+        ctx.restore();
+    }
+}
 
-    ctx.fillStyle = i % 2 === 0 ? "#ff9999" : "#ffcccc";
-    ctx.beginPath();
-    ctx.moveTo(200, 200);
-    ctx.arc(200, 200, 200, angle, angle + arc);
-    ctx.lineTo(200, 200);
-    ctx.fill();
+function spinWheel(){
+    if(spinning) return;
+    spinning = true;
+    let spinTime = 3000;
+    let spinAngle = Math.random()*8 + 10;
+    let start = performance.now();
 
-    ctx.save();
-    ctx.translate(200, 200);
-    ctx.rotate(angle + arc / 2);
-    ctx.textAlign = "right";
-    ctx.fillStyle = "#000";
-    ctx.font = "bold 18px Comic Sans MS";
-    ctx.fillText(prizes[i], 180, 10);
-    ctx.restore();
-  }
+    function animate(t){
+        let progress = t - start;
+        let angle = easeOut(progress, 0, spinAngle, spinTime);
+        startAngle = angle;
+        ctx.clearRect(0,0,400,400);
+        drawWheel();
+
+        if(progress < spinTime){
+            requestAnimationFrame(animate);
+        } else {
+            spinning = false;
+            let finalDeg = startAngle % (2*Math.PI);
+            let index = Math.floor((6 - (finalDeg / (2*Math.PI)) * 6) % 6);
+            let number = index + 1;
+            let name = getHiddenName(number);
+            result.innerHTML = "🎉 Sustojai ties: " + emojis[index] + "<br><b>"+name+"</b>";
+        }
+    }
+    requestAnimationFrame(animate);
+}
+
+function easeOut(t, b, c, d){
+    t/=d; t--; return c*(t*t*t + 1) + b;
 }
 
 drawWheel();
-
-spinBtn.onclick = function () {
-  let spinAngle = Math.random() * 3000 + 2000;
-  let duration = 3000;
-  let start = Date.now();
-
-  let interval = setInterval(function () {
-    let time = Date.now() - start;
-    if (time >= duration) {
-      clearInterval(interval);
-      let index = Math.floor(prizes.length - (startAngle % (2 * Math.PI)) / arc) % prizes.length;
-      const number = selectedIndex + 1;
-const name = getHiddenName(number);
-
-result.innerHTML =
-    "🎉 Išsukai: " + prizes[selectedIndex] +
-    "<br>👤 Tai atitinka vardą: <b>" + name + "</b>";
-      return;
-    }
-    startAngle += (spinAngle / duration) * 0.1;
-    ctx.clearRect(0, 0, wheel.width, wheel.height);
-    drawWheel();
-  }, 10);
-};
+spinBtn.onclick = spinWheel;
