@@ -1,7 +1,6 @@
 const wheel = document.getElementById("wheel");
 const spinBtn = document.getElementById("spin");
 const result = document.getElementById("result");
-const music = document.getElementById("music");
 const ctx = wheel.getContext("2d");
 
 const prizes = [
@@ -20,7 +19,6 @@ function drawWheel() {
   for (let i = 0; i < prizes.length; i++) {
     const angle = startAngle + i * arc;
 
-    // spalvos
     ctx.fillStyle = i % 2 === 0 ? "#ff9999" : "#ffcccc";
     ctx.beginPath();
     ctx.moveTo(200, 200);
@@ -28,7 +26,6 @@ function drawWheel() {
     ctx.lineTo(200, 200);
     ctx.fill();
 
-    // tekstas
     ctx.save();
     ctx.translate(200, 200);
     ctx.rotate(angle + arc / 2);
@@ -43,8 +40,6 @@ function drawWheel() {
 drawWheel();
 
 spinBtn.onclick = function () {
-  music.play();
-  
   let spinAngle = Math.random() * 3000 + 2000;
   let duration = 3000;
   let start = Date.now();
