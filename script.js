@@ -49,7 +49,12 @@ spinBtn.onclick = function () {
     if (time >= duration) {
       clearInterval(interval);
       let index = Math.floor(prizes.length - (startAngle % (2 * Math.PI)) / arc) % prizes.length;
-      result.textContent = "🎉 Laimėjai: " + prizes[index] + "!";
+      const number = selectedIndex + 1;
+const name = getHiddenName(number);
+
+result.innerHTML =
+    "🎉 Išsukai: " + prizes[selectedIndex] +
+    "<br>👤 Tai atitinka vardą: <b>" + name + "</b>";
       return;
     }
     startAngle += (spinAngle / duration) * 0.1;
