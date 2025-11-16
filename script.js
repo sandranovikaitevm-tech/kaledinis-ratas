@@ -13,7 +13,7 @@ function drawWheel(){
     const arc = Math.PI * 2 / sections;
     for(let i=0;i<sections;i++){
         ctx.beginPath();
-        ctx.fillStyle = i%2==0 ? "#ffecd2" : "#ffe4e1";
+        by ctx.fillStyle = i%2==0 ? "#ffecd2" : "#ffe4e1";
         ctx.moveTo(200,200);
         ctx.arc(200,200,200,startAngle + i*arc, startAngle + (i+1)*arc);
         ctx.fill();
@@ -50,7 +50,17 @@ function spinWheel(){
             let index = Math.floor((6 - (finalDeg / (2*Math.PI)) * 6) % 6);
             let number = index + 1;
             let name = getHiddenName(number);
-            result.innerHTML = "🎉 Sustojai ties: " + emojis[index] + "<br><b>"+name+"</b>";
+
+// Jei Sandra išsuko savo vardą (numeris 1)
+if (name === "Sandra") {
+    result.innerHTML = "😅 Ups! Išsukai savo vardą – bandyk dar kartą!";
+    // Pašaliname Sandra iš “panaudotų”, kad neužsifiksuotų
+    usedNumbers = usedNumbers.filter(n => n !== 1);
+    localStorage.setItem("usedNumbers", JSON.stringify(usedNumbers));
+    return; // nebevykdome toliau
+}
+
+result.innerHTML = "🎉 Sustojai ties: " + emojis[index] + "<br><b>" + name + "</b>";
         }
     }
     requestAnimationFrame(animate);
